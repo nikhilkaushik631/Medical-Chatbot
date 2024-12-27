@@ -41,14 +41,23 @@ def send_message_safely(chat_session, message):
     except Exception as e:
         return f"An error occurred: {str(e)}. Please try asking your question again."
 
+# Function to reset chat
+def reset_chat():
+    st.session_state.chat_session = model.start_chat(history=[])
+    send_message_safely(st.session_state.chat_session, SYSTEM_PROMPT)
+    
 # Initialize chat session with system prompt
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = model.start_chat(history=[])
     # Send the system prompt once at the start
     send_message_safely(st.session_state.chat_session, SYSTEM_PROMPT)
 
-# Display the chatbot's title on the page
-st.title("Medical Assistant Chatbot")
+col1, col2 = st.columns([6,1])
+with col1:
+    st.title("Medical Assistant Chatbot")
+with col2:
+    if st.button("New Chat", type="primary"):
+        reset_chat()
 
 # Function to translate roles between Gemini and Streamlit terminology
 def translate_role_for_streamlit(user_role):
